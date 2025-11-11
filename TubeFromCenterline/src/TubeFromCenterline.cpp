@@ -247,14 +247,17 @@ int main(int, char *[])
     // tube->SetCapping(true);             // close the ends
     // Default: radius is constant, so no need to enable VaryRadius
 
-    // 6) STL output: "output/tube.stl" two levels above exe dir
+    // 6) STL output: "output/<csv-filename>.stl" two levels above exe dir
     std::filesystem::path exeDir = GetExeDir();
     std::filesystem::path outDir = exeDir / ".." / ".." / "output";
     std::error_code ec;
     outDir = std::filesystem::weakly_canonical(outDir, ec);
     std::filesystem::create_directories(outDir, ec);
 
-    std::filesystem::path outFile = outDir / "tube.stl";
+    // basename of csv (without extension) + ".stl"
+    std::filesystem::path outFileName = csvPath.stem();
+    outFileName += ".stl";
+    std::filesystem::path outFile = outDir / outFileName;
 
     vtkNew<vtkTriangleFilter> tri;
     tri->SetInputConnection(tube->GetOutputPort());
