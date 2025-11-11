@@ -1,3 +1,22 @@
+# setup
+https://qiita.com/ononono73/items/f336cea22c3f0813406d
+
+# usage
+Copy `TubeFromCenterline.cpp` and `CMakeLists.txt` in your directory, and build by below commands
+```
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Release
+```
+
+and execute
+
+```
+cd Release
+.\TubeFromCenterline.exe
+```
+
 # memo
 
 菅軸方向の分割数は、読み込む中心線(*.csv) の点群数で決まる <br>
