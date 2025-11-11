@@ -11,9 +11,8 @@ except ImportError:
     tk = None
     filedialog = None
 
-
 def compute_cumulative_length(csv_file):
-    """1本の中心線CSVから累積長さを計算する"""
+    # 1本の中心線CSVから累積長さを計算する
     points = []
     with open(csv_file, newline='') as f:
         reader = csv.DictReader(f)
@@ -41,20 +40,20 @@ def compute_cumulative_length(csv_file):
 
 
 def process_files(file_list):
-    """複数ファイルをまとめて処理（バッチ処理用の入り口）"""
+    # 複数ファイルをまとめて処理（バッチ処理用の入り口）
     results = {}
     for path in file_list:
         try:
             length = compute_cumulative_length(path)
             results[path] = length
-            print(f"{path}: 累積長さ = {length:.6f}")
+            print(f"{path}: total length = {length:.6f}")
         except Exception as e:
             print(f"{path}: エラーが発生しました: {e}", file=sys.stderr)
     return results
 
 
 def select_files_via_gui():
-    """GUIでファイルを選択（複数選択可）"""
+    # GUIでファイルを選択（複数選択可）
     if tk is None or filedialog is None:
         print("tkinter が利用できないため、GUIでの選択は使えません。", file=sys.stderr)
         return []

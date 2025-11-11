@@ -238,12 +238,13 @@ int main(int, char *[])
 
     // 5) TubeFilter: constant radius 0.8
     const double tubeRadius = 0.8;
-    const unsigned int nTv = 8; // number of sides of tube cross-section
+    const unsigned int nTv = 64; // number of sides of tube cross-section  .  more sides => smoother, more triangles
 
     vtkNew<vtkTubeFilter> tube;
     tube->SetInputData(polyData);
     tube->SetNumberOfSides(static_cast<int>(nTv));
     tube->SetRadius(tubeRadius);
+    // tube->SetCapping(true);             // close the ends
     // Default: radius is constant, so no need to enable VaryRadius
 
     // 6) STL output: "output/tube.stl" two levels above exe dir
