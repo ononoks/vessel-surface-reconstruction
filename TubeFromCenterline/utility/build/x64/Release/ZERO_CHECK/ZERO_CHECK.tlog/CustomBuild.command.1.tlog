@@ -1,0 +1,10 @@
+^D:\OLAB\251104\TUBESFROMCENTERLINE\UTILITY_CODE\BUILD\CMAKEFILES\6C8C3CAA7A76A47E34DFDD538BD524EC\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SD:/Olab/251104/TubesFromCenterline/utility_code -BD:/Olab/251104/TubesFromCenterline/utility_code/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file D:/Olab/251104/TubesFromCenterline/utility_code/build/VTKTools.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
