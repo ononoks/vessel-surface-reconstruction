@@ -2,6 +2,7 @@
 https://qiita.com/ononono73/items/f336cea22c3f0813406d
 
 # usage
+ビルドは `x64 Native Tools Command Prompt for VS 2022` で行う必要がある <br>
 Copy `TubeFromCenterline.cpp` and `CMakeLists.txt` in your directory, and build by below commands
 ```
 mkdir build
@@ -11,7 +12,7 @@ cmake --build . --config Release
 ```
 
 and execute
-
+(実行は、どのCLIでもいい)
 ```
 cd Release
 .\TubeFromCenterline.exe
