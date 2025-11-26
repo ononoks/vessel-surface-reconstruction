@@ -27,6 +27,7 @@
 #include <filesystem>
 #include <string>
 #include <vector>
+#include <limits>
 
 // --- Get executable directory (OS dependent) ---
 #if defined(_WIN32)
@@ -185,6 +186,51 @@ static bool LoadCenterlineFromCsv(const std::filesystem::path &csvPath, vtkPoint
     return true;
 }
 
+// --- Ask tube parameters (radius and number of sides) from user ---
+static bool AskTubeParameters(double &radius, unsigned int &nTv)
+{
+    std::cout << "=== Tube Parameters ===" << std::endl;
+
+    // radius
+    std::cout << "Enter tube radius (positive real number, e.g. 0.8): " << std::flush;
+    {
+        std::string line;
+        if (!std::getline(std::cin, line))
+        {
+            return false;
+        }
+        std::stringstream ss(line);
+        if (!(ss >> radius) || radius <= 0.0)
+        {
+            std::cerr << "Invalid tube radius." << std::endl;
+            return false;
+        }
+    }
+
+    // number of sides
+    std::cout << "Enter number of sides (integer >= 3, e.g. 32): " << std::flush;
+    {
+        std::string line;
+        if (!std::getline(std::cin, line))
+        {
+            return false;
+        }
+        unsigned int tmp = 0;
+        std::stringstream ss(line);
+        if (!(ss >> tmp) || tmp < 3)
+        {
+            std::cerr << "Invalid number of sides." << std::endl;
+            return false;
+        }
+        nTv = tmp;
+    }
+
+    std::cout << "Using tubeRadius = " << radius
+              << ", nTv = " << nTv << std::endl << std::endl;
+
+    return true;
+}
+
 int main(int, char *[])
 {
     vtkNew<vtkNamedColors> nc;
@@ -206,6 +252,15 @@ int main(int, char *[])
 
     const vtkIdType nV = points->GetNumberOfPoints();
     std::cout << "Loaded point count: " << nV << std::endl;
+
+    // 2.5) Ask tube parameters (radius, number of sides)
+    double tubeRadius = 0.8;
+    unsigned int nTv = 32;
+    if (!AskTubeParameters(tubeRadius, nTv))
+    {
+        std::cerr << "Failed to get tube parameters. Aborting." << std::endl;
+        return EXIT_FAILURE;
+    }
 
     // 3) Build polyline from points
     vtkNew<vtkCellArray> lines;
@@ -236,10 +291,7 @@ int main(int, char *[])
 
     polyData->GetPointData()->AddArray(colors);
 
-    // 5) TubeFilter: constant radius 0.8
-    const double tubeRadius = 0.8;
-    const unsigned int nTv = 64; // number of sides of tube cross-section  .  more sides => smoother, more triangles
-
+    // 5) TubeFilter: use user-defined radius and number of sides
     vtkNew<vtkTubeFilter> tube;
     tube->SetInputData(polyData);
     tube->SetNumberOfSides(static_cast<int>(nTv));
@@ -254,10 +306,13 @@ int main(int, char *[])
     outDir = std::filesystem::weakly_canonical(outDir, ec);
     std::filesystem::create_directories(outDir, ec);
 
-    // basename of csv (without extension) + ".stl"
-    std::filesystem::path outFileName = csvPath.stem();
-    outFileName += ".stl";
-    std::filesystem::path outFile = outDir / outFileName;
+    // basename of csv (without extension) + "_radius{tubeRadius}_nTv{nTv}.stl"
+    std::ostringstream oss;
+    oss << csvPath.stem().string()
+        << "_radius" << tubeRadius
+        << "_nTv" << nTv
+        << ".stl";
+    std::filesystem::path outFile = outDir / oss.str();
 
     vtkNew<vtkTriangleFilter> tri;
     tri->SetInputConnection(tube->GetOutputPort());
@@ -294,7 +349,7 @@ int main(int, char *[])
     iren->SetRenderWindow(renWin);
     renWin->AddRenderer(renderer);
     renWin->SetSize(500, 500);
-    renWin->SetWindowName("TubeFromCenterline (CSV, constant radius)");
+    renWin->SetWindowName("TubeFromCenterline (CSV, user-defined radius)");
     renWin->Render();
 
     vtkNew<vtkInteractorStyleTrackballCamera> style;
@@ -303,4 +358,3 @@ int main(int, char *[])
 
     return EXIT_SUCCESS;
 }
-
