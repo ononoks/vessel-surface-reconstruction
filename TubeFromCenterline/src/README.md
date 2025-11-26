@@ -11,7 +11,7 @@ cmake ..
 cmake --build . --config Release
 ```
 
-and execute
+and execute <br>
 (実行は、どのCLIでもいい)
 ```
 cd Release
@@ -21,8 +21,9 @@ cd Release
 # memo
 
 菅軸方向の分割数は、読み込む中心線(*.csv) の点群数で決まる <br>
-円周方向の分割数は、コード内の
+血管半径と円周方向の分割数は、コード内の
 ```
+double tubeRadius = 0.8;
 const unsigned int nTv = 64;
 ```
-で制御している。
+で制御しており、実行時に入力できる。
